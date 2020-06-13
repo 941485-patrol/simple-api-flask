@@ -1,6 +1,7 @@
 from flask import (Blueprint, flash, g, redirect, render_template, request, session, url_for, jsonify)
 from app import db
 from models import Employee
+from forms import EmployeeForm
 import datetime
 import pytz
 
@@ -11,15 +12,19 @@ def index():
     if request.method=='POST':
         timezone=pytz.timezone('UTC')
         datenow = timezone.localize(datetime.datetime.utcnow())
-        name=request.form['name']
-        email=request.form['email']
-        occupations_id=request.form['occupations_id']
+        # name=request.form['name']
+        # email=request.form['email']
+        # occupations_id=request.form['occupations_id']
         created_at=datenow.strftime('%Y-%m-%dT%H:%M:%S.%fZ')
         updated_at=datenow.strftime('%Y-%m-%dT%H:%M:%S.%fZ')
-        emp=Employee(name=name, email=email, occupations_id=occupations_id, created_at=created_at, updated_at=updated_at)
-        db.session.add(emp)
-        db.session.commit()
-        return jsonify({'message':'Emloyee created.','employee_id':emp.id})
+        form = EmployeeForm()
+        if form.validate_on_submit():
+            emp=Employee(name=form.name.data, email=form.email.data, occupations_id=form.occupations_id.data, created_at=created_at, updated_at=updated_at)
+            db.session.add(emp)
+            db.session.commit()
+            return jsonify({'message':'Emloyee created.','employee_id':emp.id})
+        else:
+            return jsonify({'errors': form.errors})
 
     elif request.method=='GET':
         employees=Employee.query.order_by(Employee.id).all()
@@ -43,13 +48,14 @@ def view(id):
 def update(id):
     timezone=pytz.timezone('UTC')
     datenow = timezone.localize(datetime.datetime.utcnow())
-    name=request.form['name']
-    email=request.form['email']
-    occupations_id=request.form['occupations_id']
     updated_at=datenow.strftime('%Y-%m-%dT%H:%M:%S.%fZ')
-    emp=Employee.query.filter_by(id=id).update({'name':name, 'email':email, 'occupations_id':occupations_id, 'updated_at':updated_at})
-    db.session.commit()
-    return redirect(url_for('employees.view',id=id))
+    form = EmployeeForm()
+    if form.validate_on_submit():
+        emp=Employee.query.filter_by(id=id).update({'name':form.name.data, 'email':form.email.data, 'occupations_id':form.occupations_id.data, 'updated_at':updated_at})
+        db.session.commit()
+        return redirect(url_for('employees.view',id=id))
+    else:
+        return jsonify({'errors': form.errors})
 
 @bp.route('/delete/<int:id>', methods=['POST'])
 def delete(id):

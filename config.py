@@ -6,6 +6,7 @@ class Config(object):
     DEBUG=False
     TESTING=False
     CSRF_ENABLED=False
+    WTF_CSRF_ENABLED = False
     SECRET_KEY='secret-key'
     SQLALCHEMY_DATABASE_URI = environ.get('DATABASE_URL')
 
