@@ -47,3 +47,12 @@ class Employee(db.Model):
             'updated_at':self.updated_at,
             'occupations_id':self.occupations_id,
         }
+
+#FORMATTER
+# from datetime import datetime
+# a = 'Sat, 30 May 2020 09:36:39 GMT'
+# b=datetime.strptime(a,'%a, %d %b %Y %H:%M:%S %Z')
+# c=b.strftime('%Y-%m-%dT%H:%M:%S.%f%z')
+
+#updated_at=datenow.strftime('%Y-%m-%dT%H:%M:%S.%fZ')
+# name=request.form['name']
