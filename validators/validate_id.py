@@ -1,5 +1,4 @@
-from models.occupation import Occupation
-from sqlalchemy.orm import load_only
+from flask import (request)
 from wtforms.validators import ValidationError
 
 class ValidateById():
@@ -10,17 +9,19 @@ class ValidateById():
         self.msg = 'Wrong {} id.'.format(self.subj)
 
     def __call__(self, form, field):
-        if form.id.data == '':
-            if self.column =='occupations_id':
-                data=self.model.query.filter(self.model.occupations_id==field.data).first()
-                if not data:
-                    raise ValidationError(self.msg)
-        else:
-            if self.column == 'occupations_id':
-                data=self.model.query.filter_by(occupations_id=field.data).first()
-                if not data:
-                    raise ValidationError(self.msg)
-            if self.column == 'id':
+        try:
+            if form.id.data == '':
                 data=self.model.query.filter_by(id=field.data).first()
                 if not data:
                     raise ValidationError(self.msg)
+            else:
+                path=str(request.path).split('/')
+                int(field.data)
+                if self.column == 'id':
+                    if path[3] != field.data:
+                        raise ValidationError(self.msg)                    
+                data=self.model.query.filter_by(id=field.data).first()
+                if not data:
+                    raise ValidationError(self.msg)
+        except ValueError as e:
+            raise ValidationError(self.msg)

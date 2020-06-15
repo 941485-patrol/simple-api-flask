@@ -1,13 +1,11 @@
 from flask import (Blueprint, flash, g, redirect, render_template, request, session, url_for, jsonify)
 from app import db
-from models import Occupation, Employee
+from models import Occupation
+from controllers.occupation.main import bp
 from forms import JobForm
-from .url_util import url_util
+from controllers.url_util import url_util
 import datetime
 import pytz
-
-bp=Blueprint('occupations', __name__, url_prefix='/jobs')
-
 @bp.route('/', methods=('GET','POST'))
 def index():
     if request.method=='POST':
@@ -43,30 +41,3 @@ def index():
             jobResult.append(jobObj)
         jobList['results']=jobResult
         return jsonify(jobList)
-
-@bp.route('/view/<int:id>', methods=['GET'])
-def view(id):
-    job=Occupation.query.filter_by(id=id).first_or_404(description="Job not found")
-    jobObj=job.serialize()
-    jobObj['home']=url_for('occupations.index')
-    jobObj['this']=request.path
-    return jsonify(jobObj)
-
-@bp.route('/update/<int:id>', methods=['POST'])
-def update(id):
-    timezone=pytz.timezone('UTC')
-    datenow = timezone.localize(datetime.datetime.utcnow())
-    form = JobForm()
-    if form.validate_on_submit():
-        job=Occupation.query.filter_by(id=id).update({'name':form.name.data, 'description':form.description.data, 'updated_at':datenow})
-        db.session.commit()
-        return redirect(url_for('occupations.view',id=id))
-    else:
-        return jsonify({'errors': form.errors})
-
-@bp.route('/delete/<int:id>', methods=['POST'])
-def delete(id):
-    job=Occupation.query.filter_by(id=id).first_or_404(description="Job not found")
-    db.session.delete(job)
-    db.session.commit()
-    return jsonify({'message':'Job deleted', 'home': url_for('occupations.index')})

@@ -1,58 +1,58 @@
 from models import Employee, Occupation
 from sqlalchemy.orm import load_only
 from wtforms.validators import ValidationError
+from sqlalchemy.exc import DataError, InternalError
+from flask import (request)
 
-# Class-based 
 class ValidateName():
     def __init__(self, model, column, subj):
         self.model = model
         self.column = column
         self.subj = subj
         self.msg = '{} is already taken.'.format(self.subj)
-    
+        self.msg2 = 'Id associated with this field is invalid.'
     def __call__(self, form, field): 
         if form.id.data=='':
             if self.column=='name':
-                fields=self.model.query.filter_by(name=field.data).first()
+                fields=self.model.query.filter(self.model.name.ilike(field.data)).first()
                 if fields is None:
                     pass
                 elif fields.name.lower() == field.data.lower():
                     raise ValidationError(self.msg)
             if self.column=='description':
-                fields=self.model.query.filter_by(description=field.data).first()
+                fields=self.model.query.filter(self.model.description.ilike(field.data)).first()
                 if fields is None:
                     pass
                 elif fields.description.lower() == field.data.lower() and fields is not None:
                     raise ValidationError(self.msg)
             if self.column=='email':
-                fields=self.model.query.filter_by(email=field.data).first()
+                fields=self.model.query.filter(self.model.email.ilike(field.data)).first()
                 if fields is None:
                     pass
                 elif fields.email.lower() == field.data.lower() and fields is not None:
                     raise ValidationError(self.msg)
         else:
-            valid_id = self.model.query.get(form.id.data)
-            if not valid_id:
-                raise ValidationError('Id associated with this field is not correct.')
+            path=str(request.path).split('/')
+            if path[3] != form.id.data:
+                raise ValidationError(self.msg2)
             if self.column=='name':
-                fields=self.model.query.filter(self.model.id!=form.id.data,self.model.name==field.data).first()
+                fields=self.model.query.filter(self.model.id!=form.id.data,self.model.name.ilike(field.data)).first()
                 if fields is None:
                     pass
-                else:
+                elif fields.name.lower() == field.data.lower():
                     raise ValidationError(self.msg)
             if self.column=='description':
-                fields=self.model.query.filter(self.model.id!=form.id.data,self.model.description==field.data).first()
+                fields=self.model.query.filter(self.model.id!=form.id.data,self.model.description.ilike(field.data)).first()
                 if fields is None:
                     pass
-                else:
+                elif fields.description.lower() == field.data.lower():
                     raise ValidationError(self.msg)
             if self.column=='email':
-                fields=self.model.query.filter(self.model.id!=form.id.data,self.model.email==field.data).first()
+                fields=self.model.query.filter(self.model.id!=form.id.data,self.model.email.ilike(field.data)).first()
                 if fields is None:
                     pass
-                else:
+                elif fields.email.lower() == field.data.lower() and fields is not None:
                     raise ValidationError(self.msg)
-
 # Function-based
 # def validate_name(form, field):
 #     employees=Employee.query.order_by(Employee.id).options(load_only('name')).all()
@@ -62,20 +62,3 @@ class ValidateName():
 #     for x in empList:
 #         if x.lower() == field.data.lower():
 #             raise ValidationError('Name is already taken.')
-
-# Other form
-# if form.id.data == '':
-#     fields=self.model.query.order_by(self.model.id).options(load_only(self.column)).all()
-# else:
-#     fields=self.model.query.filter(self.model.id!=form.id.data).order_by(self.model.id).all()
-#     fieldList=[]
-#     for fld in fields:
-#         if self.column == 'name':
-#             fieldList.append(fld.name)
-#         if self.column == 'description':
-#             fieldList.append(fld.description)
-#         if self.column == 'email':
-#             fieldList.append(fld.email)
-#     for x in fieldList:
-#         if x.lower() == field.data.lower():
-#             raise ValidationError(self.msg)
