@@ -8,6 +8,7 @@ class Occupation(db.Model):
     created_at=db.Column(db.DateTime(timezone=True))
     updated_at=db.Column(db.DateTime(timezone=True))
     employees=db.relationship('Employee', lazy='select', backref=db.backref('occupations', lazy='joined'))
+    listing={'name': name, 'description': description}
 
     def __init__(self, name, description, created_at, updated_at):
         self.name = name

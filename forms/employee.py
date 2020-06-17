@@ -1,12 +1,12 @@
 from flask_wtf import FlaskForm
 from wtforms.fields import StringField, HiddenField
 from wtforms.fields.html5 import EmailField
-from wtforms.validators import DataRequired, Email, InputRequired, NoneOf, ValidationError
-from validators import ValidateName, ValidateById, stripper
+from wtforms.validators import DataRequired, Email, InputRequired, Regexp, ValidationError
+from validators import ValidateName, ValidateById, CheckId, stripper
 from models import Employee, Occupation
 
 class EmployeeForm(FlaskForm):
-    id=HiddenField(label='id', validators=[ValidateById(Employee,'id','Employee'), stripper])
-    name=StringField(label='name', validators=[DataRequired(), ValidateName(Employee,'name','Name'), stripper])
-    email=EmailField(label='email', validators=[DataRequired(), Email(message='Invalid Email.'), ValidateName(Employee,'email','E-mail'), stripper])
-    occupations_id=StringField(label='occupations_id', validators=[DataRequired(), ValidateById(Occupation,'occupations_id','Job'), stripper])
+    id=HiddenField(label='id', validators=[stripper, CheckId('Employee','int','pk'), ValidateById(Employee,'id','Employee')])
+    name=StringField(label='name', validators=[DataRequired(), stripper, CheckId('Employee','str','pk'), ValidateName(Employee,'name','Name')])
+    email=EmailField(label='email', validators=[DataRequired(), stripper, CheckId('Employee','str','pk'), Email(message='Invalid Email.'), ValidateName(Employee,'email','E-mail')])
+    occupations_id=StringField(label='occupations_id', validators=[DataRequired(), stripper, CheckId('Job','int'), ValidateById(Occupation,'occupations_id','Job')])

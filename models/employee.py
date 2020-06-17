@@ -7,6 +7,7 @@ class Employee(db.Model):
     created_at=db.Column(db.DateTime(timezone=True))
     updated_at=db.Column(db.DateTime(timezone=True))
     occupations_id=db.Column(db.Integer, db.ForeignKey('occupations.id'))
+    listing={'name':name, 'email':email, 'occupations_id':occupations_id}
 
     def __init__(self, name, email, created_at, updated_at, occupations_id):
         self.name = name
