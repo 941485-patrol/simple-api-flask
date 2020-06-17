@@ -1,7 +1,5 @@
-from models import Employee, Occupation
-from sqlalchemy.orm import load_only
 from wtforms.validators import ValidationError
-from sqlalchemy.exc import DataError, InternalError
+from app import db
 
 class ValidateName():
     def __init__(self, model, column, subj):
@@ -11,11 +9,14 @@ class ValidateName():
         self.msg = '{} is already taken.'.format(self.subj)
 
     def __call__(self, form, field):
-        if form.id.data=='':
-            fields=self.model.query.filter(self.model.listing[self.column].ilike(field.data)).first()
+        idformdata=form.id.data
+        fielddata=field.data
+        count=db.session.query(db.func.count(self.model.id)).scalar()
+        if idformdata=='':
+            fields=self.model.query.filter(self.model.listing[self.column].ilike(fielddata)).first()
         else:
-            fields=self.model.query.filter(self.model.id!=form.id.data,self.model.listing[self.column].ilike(field.data)).first()
+            fields=self.model.query.filter(self.model.id!=idformdata,self.model.listing[self.column].ilike(fielddata)).first()
         if fields is not None:
             fields = fields.serialize()
-            if fields.get(self.column).lower() == field.data.lower():
+            if fields.get(self.column).lower() == fielddata.lower():
                 raise ValidationError(self.msg)
