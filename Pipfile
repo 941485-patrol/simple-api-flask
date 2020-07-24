@@ -4,6 +4,7 @@ url = "https://pypi.org/simple"
 verify_ssl = true
 
 [dev-packages]
+pylint = "*"
 
 [packages]
 flask = "*"
@@ -16,6 +17,7 @@ python-dotenv = "*"
 pytz = "*"
 flask-wtf = "*"
 wtforms = {extras = ["email"],version = "*"}
+pytest = "*"
 
 [requires]
 python_version = "3.8"

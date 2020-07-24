@@ -16,12 +16,14 @@ def index():
             job=Occupation(name=form.name.data, description=form.description.data, created_at=datenow, updated_at=datenow)
             db.session.add(job)
             db.session.commit()
-            return jsonify({'message':'Job created.','job_id':job.id})
+            return jsonify({'message':'Job created.','job_id':job.id}), 200
         else:
-            return jsonify({'errors': form.errors})
+            return jsonify({'errors': form.errors}), 400
     elif request.method=='GET':
         page=request.args.get('page',1)
         jobs=Occupation.query.order_by(Occupation.id).paginate(page=int(page),per_page=1)
+        if len(jobs.items) == 0:
+            return jsonify({'message': 'No data.'}), 200
         jobList={}
         jobResult=[]
         jobList['navi']=url_util(jobs, 'occupations.index')
@@ -40,4 +42,4 @@ def index():
             jobObj['employees']=empList
             jobResult.append(jobObj)
         jobList['results']=jobResult
-        return jsonify(jobList)
+        return jsonify(jobList), 200

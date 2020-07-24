@@ -6,7 +6,7 @@ from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
 
-app.config.from_object(DevelopmentConfig())
+app.config.from_object(environ.get('APP_SETTINGS'))
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['JSON_SORT_KEYS'] = False
 db = SQLAlchemy(app)
