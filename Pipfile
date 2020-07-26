@@ -15,9 +15,20 @@ psycopg2 = "*"
 gunicorn = "*"
 python-dotenv = "*"
 pytz = "*"
-flask-wtf = "*"
-wtforms = {extras = ["email"],version = "*"}
 pytest = "*"
+alembic = "*"
+click = "*"
+itsdangerous = "*"
+python-dateutil = "*"
+python-editor = "*"
+six = "*"
+Flask-WTF = "*"
+Jinja2 = "*"
+Mako = "*"
+MarkupSafe = "*"
+SQLAlchemy = "*"
+Werkzeug = "*"
+WTForms = {extras = ["email"],version = "*"}
 
 [requires]
 python_version = "3.8"
