@@ -8,4 +8,4 @@ def delete(id):
     job=Occupation.query.filter_by(id=id).first_or_404(description="Job not found")
     db.session.delete(job)
     db.session.commit()
-    return jsonify({'message':'Job deleted', 'home': url_for('occupations.index')})
+    return jsonify({'message':'Job deleted.', 'home': url_for('occupations.index')}), 200

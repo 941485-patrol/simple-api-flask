@@ -8,4 +8,4 @@ def view(id):
     jobObj=job.serialize()
     jobObj['home']=url_for('occupations.index')
     jobObj['this']=request.path
-    return jsonify(jobObj)
+    return jsonify(jobObj), 200

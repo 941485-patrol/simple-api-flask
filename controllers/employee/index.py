@@ -17,7 +17,7 @@ def index():
             emp=Employee(name=form.name.data, email=form.email.data, occupations_id=form.occupations_id.data, created_at=datenow, updated_at=datenow)
             db.session.add(emp)
             db.session.commit()
-            return jsonify({'message':'Emloyee created.','employee_id':emp.id}), 200
+            return jsonify({'message':'Employee created.','employee_id':emp.id}), 200
         else:
             return jsonify({'errors': form.errors}), 400
     elif request.method=='GET':

@@ -14,6 +14,6 @@ def update(id):
     if form.validate_on_submit():
         job=Occupation.query.filter_by(id=id).update({'name':form.name.data, 'description':form.description.data, 'updated_at':datenow})
         db.session.commit()
-        return redirect(url_for('occupations.view',id=id))
+        return redirect(url_for('occupations.view',id=id)), 200
     else:
-        return jsonify({'errors': form.errors})
+        return jsonify({'errors': form.errors}), 400

@@ -13,4 +13,4 @@ def view(id):
     }
     empObj['home']=url_for('employees.index')
     empObj['this']=request.full_path
-    return jsonify(empObj)
+    return jsonify(empObj), 200

@@ -3,7 +3,7 @@ from flask import (request)
 
 class IsIdPathValid():
     def __init__(self):
-        self.msg = 'Invalid Id path'
+        self.msg = 'Invalid Id path.'
 
     def __call__(self, form, field):
         path=str(request.path).split('/')
