@@ -3,10 +3,12 @@ from app import db
 from models import Occupation
 from controllers.occupation.main import bp
 from forms import JobForm
+from middlewares import login_required
 import datetime
 import pytz
 
 @bp.route('/update/<int:id>', methods=['POST'])
+@login_required
 def update(id):
     timezone=pytz.timezone('UTC')
     datenow = timezone.localize(datetime.datetime.utcnow())

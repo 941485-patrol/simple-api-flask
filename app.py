@@ -8,7 +8,7 @@ app = Flask(__name__)
 
 app.config.from_object(environ.get('APP_SETTINGS'))
 app.config['SESSION_PERMANENT'] = True
-app.config['PERMANENT_SESSION_LIFETIME'] = datetime.timedelta(seconds=10)
+app.config['PERMANENT_SESSION_LIFETIME'] = datetime.timedelta(minutes=3)
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['JSON_SORT_KEYS'] = False
 db = SQLAlchemy(app)
@@ -24,7 +24,6 @@ app.register_blueprint(user.bp)
 from middlewares import login_required
 
 @app.route("/")
-@login_required
 def hello():
     return "Hello World"
 

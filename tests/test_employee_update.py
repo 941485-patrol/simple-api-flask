@@ -2,8 +2,10 @@ from config_test import app, client
 from app import db
 import json, datetime, pytz
 from models import Occupation, Employee
+from tests.user import login,logout
 
 def test_update(app, client):
+    login(app,client)
     db.session.query(Employee).delete()
     db.session.commit()
     db.session.query(Occupation).delete()
@@ -25,8 +27,10 @@ def test_update(app, client):
     db.session.commit()
     db.session.query(Occupation).delete()
     db.session.commit()
+    logout(app,client)
 
 def test_update_double_entry(app, client):
+    login(app,client)
     db.session.query(Employee).delete()
     db.session.commit()
     db.session.query(Occupation).delete()
@@ -56,8 +60,10 @@ def test_update_double_entry(app, client):
     db.session.commit()
     db.session.query(Occupation).delete()
     db.session.commit()
+    logout(app,client)
 
 def test_update_occupations_id_validations(app, client):
+    login(app,client)
     db.session.query(Employee).delete()
     db.session.commit()
     db.session.query(Occupation).delete()
@@ -86,8 +92,10 @@ def test_update_occupations_id_validations(app, client):
     db.session.commit()
     db.session.query(Occupation).delete()
     db.session.commit()
+    logout(app,client)
 
 def test_update_id_validations(app, client):
+    login(app,client)
     db.session.query(Employee).delete()
     db.session.commit()
     db.session.query(Occupation).delete()
@@ -121,8 +129,10 @@ def test_update_id_validations(app, client):
     db.session.commit()
     db.session.query(Occupation).delete()
     db.session.commit()
+    logout(app,client)
 
 def test_employee_update_empty_fields(app, client):
+    login(app,client)
     db.session.query(Employee).delete()
     db.session.commit()
     db.session.query(Occupation).delete()
@@ -149,8 +159,10 @@ def test_employee_update_empty_fields(app, client):
     db.session.commit()
     db.session.query(Occupation).delete()
     db.session.commit()
+    logout(app,client)
 
 def test_employee_update_incomplete_fields(app, client) -> bool : 
+    login(app,client)
     db.session.query(Employee).delete()
     db.session.commit()
     db.session.query(Occupation).delete()
@@ -175,3 +187,30 @@ def test_employee_update_incomplete_fields(app, client) -> bool :
     db.session.commit()
     db.session.query(Occupation).delete()
     db.session.commit()
+    logout(app,client)
+
+def test_update_unauthorized(app, client):
+    login(app,client)
+    db.session.query(Employee).delete()
+    db.session.commit()
+    db.session.query(Occupation).delete()
+    db.session.commit()
+    postObj = {'name': 'myname', 'description':'mydescription'}
+    response = client.post('/jobs/', data=postObj)
+    result = json.loads(response.get_data(as_text=True))
+    assert response.status_code == 200
+    assert result.get('message') == 'Job created.'
+    postObj2 = {'name': 'employeename', 'email':'employee1@gmail.com', 'occupations_id': result.get('job_id')}
+    response2 = client.post('/employees/', data=postObj2)
+    result2= json.loads(response2.get_data(as_text=True))
+    assert response2.status_code == 200
+    assert result2.get('message') == 'Employee created.'
+    logout(app,client)
+    putObj = {'id':result2.get('employee_id'), 'name': 'newEmployeeName', 'email':'newEmployee@gmail.com', 'occupations_id': result.get('job_id')}
+    response3 = client.post('/employees/update/{}'.format(result2.get('employee_id')), data=putObj)
+    assert response3.status_code == 401
+    db.session.query(Employee).delete()
+    db.session.commit()
+    db.session.query(Occupation).delete()
+    db.session.commit()
+    logout(app,client)

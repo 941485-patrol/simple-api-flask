@@ -2,6 +2,7 @@ from flask import (g,abort,jsonify)
 import functools
 
 def login_required(func):
+    @functools.wraps(func)
     def decorator(*args, **kwargs):
         if g.user is None:
             abort(401)

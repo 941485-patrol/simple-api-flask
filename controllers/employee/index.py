@@ -6,8 +6,10 @@ from controllers.url_util import url_util
 from controllers.employee.main import bp
 import datetime
 import pytz
+from middlewares import login_required
 
 @bp.route('/', methods=('GET','POST'))
+@login_required
 def index():
     if request.method=='POST':
         timezone=pytz.timezone('UTC')

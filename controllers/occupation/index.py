@@ -4,9 +4,11 @@ from models import Occupation
 from controllers.occupation.main import bp
 from forms import JobForm
 from controllers.url_util import url_util
+from middlewares import login_required
 import datetime
 import pytz
 @bp.route('/', methods=('GET','POST'))
+@login_required
 def index():
     if request.method=='POST':
         timezone=pytz.timezone('UTC')

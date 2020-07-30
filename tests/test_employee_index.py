@@ -2,8 +2,10 @@ from config_test import app, client
 from app import db
 import json, datetime, pytz
 from models import Occupation, Employee
+from tests.user import login,logout
 
 def test_index_empty(app, client):
+    login(app,client)
     db.session.query(Employee).delete()
     db.session.commit()
     response = client.get('/employees/')
@@ -12,8 +14,10 @@ def test_index_empty(app, client):
     assert result.get('message') == 'No data.'
     db.session.query(Employee).delete()
     db.session.commit()
+    logout(app,client)
 
 def test_index_not_empty(app, client):
+    login(app,client)
     db.session.query(Employee).delete()
     db.session.commit()
     db.session.query(Occupation).delete()
@@ -41,8 +45,10 @@ def test_index_not_empty(app, client):
     db.session.commit()
     db.session.query(Occupation).delete()
     db.session.commit()
+    logout(app,client)
 
 def test_index_notfound(app, client):
+    login(app,client)
     response = client.get('/employees/  ')
     assert response.status_code == 404
     response2 = client.post('/employees/  ')
@@ -55,8 +61,10 @@ def test_index_notfound(app, client):
     assert response5.status_code == 404
     response6 = client.get('employees/view/2')
     assert response6.status_code == 404
+    logout(app,client)
 
 def test_create_employee(app, client):
+    login(app,client)
     db.session.query(Employee).delete()
     db.session.commit()
     db.session.query(Occupation).delete()
@@ -75,8 +83,10 @@ def test_create_employee(app, client):
     db.session.commit()
     db.session.query(Occupation).delete()
     db.session.commit()
+    logout(app,client)
 
 def test_get_employee(app, client):
+    login(app,client)
     db.session.query(Employee).delete()
     db.session.commit()
     db.session.query(Occupation).delete()
@@ -98,8 +108,10 @@ def test_get_employee(app, client):
     db.session.commit()
     db.session.query(Occupation).delete()
     db.session.commit()
+    logout(app,client)
 
 def test_create_employee_double_entry(app, client):
+    login(app,client)
     db.session.query(Employee).delete()
     db.session.commit()
     db.session.query(Occupation).delete()
@@ -124,8 +136,10 @@ def test_create_employee_double_entry(app, client):
     db.session.commit()
     db.session.query(Occupation).delete()
     db.session.commit()
+    logout(app,client)
 
 def test_create_employee_empty_fields(app, client):
+    login(app,client)
     db.session.query(Employee).delete()
     db.session.commit()
     db.session.query(Occupation).delete()
@@ -146,8 +160,10 @@ def test_create_employee_empty_fields(app, client):
     db.session.commit()
     db.session.query(Occupation).delete()
     db.session.commit()
+    logout(app,client)
 
 def test_create_employee_incomplete_fields(app, client):
+    login(app,client)
     db.session.query(Employee).delete()
     db.session.commit()
     db.session.query(Occupation).delete()
@@ -168,8 +184,10 @@ def test_create_employee_incomplete_fields(app, client):
     db.session.commit()
     db.session.query(Occupation).delete()
     db.session.commit()
+    logout(app,client)
 
 def test_create_employee_invalid_email(app, client):
+    login(app,client)
     db.session.query(Employee).delete()
     db.session.commit()
     db.session.query(Occupation).delete()
@@ -188,8 +206,10 @@ def test_create_employee_invalid_email(app, client):
     db.session.commit()
     db.session.query(Occupation).delete()
     db.session.commit()
+    logout(app,client)
 
 def test_create_employee_occupations_id_validations(app, client):
+    login(app,client)
     db.session.query(Employee).delete()
     db.session.commit()
     db.session.query(Occupation).delete()
@@ -218,3 +238,58 @@ def test_create_employee_occupations_id_validations(app, client):
     db.session.commit()
     db.session.query(Occupation).delete()
     db.session.commit()
+    logout(app,client)
+
+def test_get_employees_unauthorized(app,client):
+    db.session.query(Employee).delete()
+    db.session.commit()
+    response = client.get('/employees/')
+    assert response.status_code == 401
+    db.session.query(Employee).delete()
+    db.session.commit()
+
+def test_create_employee_unauthorized(app, client):
+    login(app,client)
+    db.session.query(Employee).delete()
+    db.session.commit()
+    db.session.query(Occupation).delete()
+    db.session.commit()
+    postObj = {'name': 'myname', 'description':'mydescription'}
+    response = client.post('/jobs/', data=postObj)
+    result = json.loads(response.get_data(as_text=True))
+    assert response.status_code == 200
+    assert result.get('message') == 'Job created.'
+    logout(app,client)
+    postObj2 = {'name': 'employeename', 'email':'employee1@gmail.com', 'occupations_id': result.get('job_id')}
+    response2 = client.post('/employees/', data=postObj2)
+    assert response2.status_code == 401
+    db.session.query(Employee).delete()
+    db.session.commit()
+    db.session.query(Occupation).delete()
+    db.session.commit()
+    logout(app,client)
+
+def test_get_employee_unauthorized(app, client):
+    login(app,client)
+    db.session.query(Employee).delete()
+    db.session.commit()
+    db.session.query(Occupation).delete()
+    db.session.commit()
+    postObj = {'name': 'myname', 'description':'mydescription'}
+    response = client.post('/jobs/', data=postObj)
+    result = json.loads(response.get_data(as_text=True))
+    assert response.status_code == 200
+    assert result.get('message') == 'Job created.'
+    postObj2 = {'name': 'employeename', 'email':'employee1@gmail.com', 'occupations_id': result.get('job_id')}
+    response2 = client.post('/employees/', data=postObj2)
+    result2= json.loads(response2.get_data(as_text=True))
+    assert response2.status_code == 200
+    assert result2.get('message') == 'Employee created.'
+    logout(app,client)
+    response3 = client.get('/employees/view/{}'.format(result2.get('employee_id')))
+    assert response3.status_code == 401
+    db.session.query(Employee).delete()
+    db.session.commit()
+    db.session.query(Occupation).delete()
+    db.session.commit()
+    logout(app,client)

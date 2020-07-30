@@ -2,8 +2,10 @@ from config_test import app, client
 from app import db
 import json, datetime, pytz
 from models import Occupation
+from tests.user import login, logout
 
 def test_update_occupation(app, client):
+    login(app,client)
     db.session.query(Occupation).delete()
     db.session.commit()
     timezone=pytz.timezone('UTC')
@@ -19,8 +21,10 @@ def test_update_occupation(app, client):
     assert response2.status_code == 200
     db.session.query(Occupation).delete()
     db.session.commit()
+    logout(app,client)
 
 def test_update_occupation_invalid_id_number(app, client):
+    login(app,client)
     # Id is not a number
     db.session.query(Occupation).delete()
     db.session.commit()
@@ -39,9 +43,11 @@ def test_update_occupation_invalid_id_number(app, client):
     assert result2.get('errors').get('id') == ['Invalid Id number.']
     db.session.query(Occupation).delete()
     db.session.commit()
+    logout(app,client)
 
 def test_update_occupation_wrong_job_id(app, client):
     # New job_id is supposed to be 1 and not 2.
+    login(app,client)
     db.session.query(Occupation).delete()
     db.session.commit()
     timezone=pytz.timezone('UTC')
@@ -59,9 +65,11 @@ def test_update_occupation_wrong_job_id(app, client):
     assert result2.get('errors').get('id') == ['Wrong Job id.']
     db.session.query(Occupation).delete()
     db.session.commit()
+    logout(app,client)
 
 def test_update_occupation_invalid_id_path(app, client):
     # Id url path is invalid because job_id 2 does not exist yet.
+    login(app,client)
     db.session.query(Occupation).delete()
     db.session.commit()
     timezone=pytz.timezone('UTC')
@@ -79,8 +87,10 @@ def test_update_occupation_invalid_id_path(app, client):
     assert result2.get('errors').get('id') == ['Invalid Id path.']
     db.session.query(Occupation).delete()
     db.session.commit()
+    logout(app,client)
 
 def test_update_occupation_invalid_url(app, client):
+    login(app,client)
     db.session.query(Occupation).delete()
     db.session.commit()
     timezone=pytz.timezone('UTC')
@@ -100,8 +110,10 @@ def test_update_occupation_invalid_url(app, client):
     assert response4.status_code == 404
     db.session.query(Occupation).delete()
     db.session.commit()
+    logout(app,client)
 
 def test_update_occupation_empty_fields(app, client):
+    login(app,client)
     db.session.query(Occupation).delete()
     db.session.commit()
     timezone=pytz.timezone('UTC')
@@ -120,8 +132,10 @@ def test_update_occupation_empty_fields(app, client):
     assert result2.get('errors').get('name') == ['This field is required.']
     db.session.query(Occupation).delete()
     db.session.commit()
+    logout(app,client)
 
 def test_update_occupation_incomplete_fields(app, client):
+    login(app,client)
     db.session.query(Occupation).delete()
     db.session.commit()
     timezone=pytz.timezone('UTC')
@@ -140,8 +154,10 @@ def test_update_occupation_incomplete_fields(app, client):
     assert result2.get('errors').get('description') == ['Minimum 5 and maximum 100 characters.']
     db.session.query(Occupation).delete()
     db.session.commit()
+    logout(app,client)
 
 def test_update_occupation_double_entry(app, client):
+    login(app,client)
     db.session.query(Occupation).delete()
     db.session.commit()
     timezone=pytz.timezone('UTC')
@@ -167,3 +183,24 @@ def test_update_occupation_double_entry(app, client):
     assert result2.get('errors').get('name') == ['Name is already taken.']
     db.session.query(Occupation).delete()
     db.session.commit()
+    logout(app,client)
+
+def test_update_occupation_unauthorized(app, client):
+    login(app,client)
+    db.session.query(Occupation).delete()
+    db.session.commit()
+    timezone=pytz.timezone('UTC')
+    datenow = timezone.localize(datetime.datetime.utcnow())
+    postObj = {'name': 'myname', 'description':'mydescription', 'created_at':datenow, 'updated_at':datenow}
+    response = client.post('/jobs/', data=postObj)
+    result = json.loads(response.get_data(as_text=True))
+    assert response.status_code == 200
+    logout(app,client)
+    timezone=pytz.timezone('UTC')
+    datenow = timezone.localize(datetime.datetime.utcnow())
+    putObj = {'id': result.get('job_id'), 'name': 'myname1', 'description':'mydescription1', 'updated_at':datenow}
+    response2 = client.post('/jobs/update/{}'.format(result.get('job_id')), data=putObj)
+    assert response2.status_code == 401
+    db.session.query(Occupation).delete()
+    db.session.commit()
+    logout(app,client)

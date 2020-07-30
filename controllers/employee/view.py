@@ -1,8 +1,10 @@
 from models.employee import Employee
 from controllers.employee.main import bp
 from flask import (request, url_for, jsonify)
+from middlewares import login_required
 
 @bp.route('/view/<int:id>', methods=['GET'])
+@login_required
 def view(id):
     emp=Employee.query.filter_by(id=id).first_or_404(description="Employee not found")
     empObj=emp.serialize()

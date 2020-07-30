@@ -3,8 +3,10 @@ from app import db
 import json, datetime, pytz
 from forms import JobForm
 from models import Occupation
+from tests.user import login, logout
 
 def test_index_empty(app, client):
+    login(app,client)
     db.session.query(Occupation).delete()
     db.session.commit()
     response = client.get('/jobs/')
@@ -13,8 +15,10 @@ def test_index_empty(app, client):
     assert result.get('message') == 'No data.'
     db.session.query(Occupation).delete()
     db.session.commit()
+    logout(app,client)
 
 def test_index_not_empty(app, client):
+    login(app,client)
     db.session.query(Occupation).delete()
     db.session.commit()
     timezone=pytz.timezone('UTC')
@@ -35,8 +39,10 @@ def test_index_not_empty(app, client):
     assert result3.get('navi').get('total_items') == 2
     db.session.query(Occupation).delete()
     db.session.commit()
+    logout(app,client)
 
 def test_index_notfound(app, client):
+    login(app,client)
     response = client.get('/jobs/  ')
     assert response.status_code == 404
     response2 = client.post('/jobs/  ')
@@ -49,8 +55,10 @@ def test_index_notfound(app, client):
     assert response5.status_code == 404
     response6 = client.get('jobs/view/2')
     assert response6.status_code == 404
+    logout(app,client)
 
 def test_create_job(app, client):
+    login(app,client)
     db.session.query(Occupation).delete()
     db.session.commit()
     timezone=pytz.timezone('UTC')
@@ -62,8 +70,10 @@ def test_create_job(app, client):
     assert result.get('message') == 'Job created.'
     db.session.query(Occupation).delete()
     db.session.commit()
+    logout(app,client)
 
 def test_get_job(app, client):
+    login(app,client)
     db.session.query(Occupation).delete()
     db.session.commit()
     timezone=pytz.timezone('UTC')
@@ -79,8 +89,10 @@ def test_get_job(app, client):
     assert result2.get('id') == result.get('job_id')
     db.session.query(Occupation).delete()
     db.session.commit()
+    logout(app,client)
 
 def test_create_job_double_entry(app, client):
+    login(app,client)
     db.session.query(Occupation).delete()
     db.session.commit()
     timezone=pytz.timezone('UTC')
@@ -100,8 +112,10 @@ def test_create_job_double_entry(app, client):
     assert result1.get('errors').get('name') == ['Name is already taken.']
     db.session.query(Occupation).delete()
     db.session.commit()
+    logout(app,client)
 
 def test_create_job_empty_fields(app, client):
+    login(app,client)
     db.session.query(Occupation).delete()
     db.session.commit()
     timezone=pytz.timezone('UTC')
@@ -114,8 +128,10 @@ def test_create_job_empty_fields(app, client):
     assert result.get('errors').get('name') == ['This field is required.']
     db.session.query(Occupation).delete()
     db.session.commit()
+    logout(app,client)
 
 def test_create_job_incomplete_fields(app, client):
+    login(app,client)
     db.session.query(Occupation).delete()
     db.session.commit()
     timezone=pytz.timezone('UTC')
@@ -128,3 +144,41 @@ def test_create_job_incomplete_fields(app, client):
     assert result.get('errors').get('description') == ['Minimum 5 and maximum 100 characters.']
     db.session.query(Occupation).delete()
     db.session.commit()
+    logout(app,client)
+
+def test_index_unauthorized(app, client):
+    db.session.query(Occupation).delete()
+    db.session.commit()
+    response = client.get('/jobs/')
+    assert response.status_code == 401
+    db.session.query(Occupation).delete()
+    db.session.commit()
+
+def test_create_job_unauthorized(app, client):
+    db.session.query(Occupation).delete()
+    db.session.commit()
+    timezone=pytz.timezone('UTC')
+    datenow = timezone.localize(datetime.datetime.utcnow())
+    postObj = {'name': 'myname', 'description':'mydescription', 'created_at':datenow, 'updated_at':datenow}
+    response = client.post('/jobs/', data=postObj)
+    assert response.status_code == 401
+    db.session.query(Occupation).delete()
+    db.session.commit()
+
+def test_get_job_unauthorized(app, client):
+    login(app,client)
+    db.session.query(Occupation).delete()
+    db.session.commit()
+    timezone=pytz.timezone('UTC')
+    datenow = timezone.localize(datetime.datetime.utcnow())
+    postObj = {'name': 'myname', 'description':'mydescription', 'created_at':datenow, 'updated_at':datenow}
+    response = client.post('/jobs/', data=postObj)
+    result = json.loads(response.get_data(as_text=True))
+    assert response.status_code == 200
+    assert result.get('message') == 'Job created.'
+    logout(app,client)
+    response2 = client.get('/jobs/view/{}'.format(result.get('job_id')))
+    assert response2.status_code == 401
+    db.session.query(Occupation).delete()
+    db.session.commit()
+    logout(app,client)
