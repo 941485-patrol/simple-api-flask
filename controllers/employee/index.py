@@ -7,6 +7,7 @@ from controllers.employee.main import bp
 import datetime
 import pytz
 from middlewares import login_required
+from controllers.helpers.responser import responser
 
 @bp.route('/', methods=('GET','POST'))
 @login_required
@@ -19,14 +20,14 @@ def index():
             emp=Employee(name=form.name.data, email=form.email.data, occupations_id=form.occupations_id.data, created_at=datenow, updated_at=datenow)
             db.session.add(emp)
             db.session.commit()
-            return jsonify({'message':'Employee created.','employee_id':emp.id}), 200
+            return responser(jsonify({'message':'Employee created.','employee_id':emp.id}), 200)
         else:
-            return jsonify({'errors': form.errors}), 400
+            return responser(jsonify({'errors': form.errors}), 400)
     elif request.method=='GET':
         page=request.args.get('page',1)
         employees=Employee.query.order_by(Employee.id).paginate(page=int(page),per_page=1)
         if len(employees.items) == 0:
-           return jsonify({'message': 'No data.'}), 200
+            return responser(jsonify({'message': 'No data.'}), 200)
         else:
             empList={}
             empResult=[]
@@ -40,4 +41,4 @@ def index():
                 }
                 empResult.append(empObj)
             empList['results']=empResult
-            return jsonify(empList), 200
+            return responser(jsonify(empList), 200)

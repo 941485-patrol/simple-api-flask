@@ -4,7 +4,7 @@ import json, datetime, pytz
 from models import Occupation, Employee
 from tests.user import login,logout
 
-def test_delete(app, client):
+def test_employee_delete(app, client):
     login(app,client)
     db.session.query(Employee).delete()
     db.session.commit()

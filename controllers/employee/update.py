@@ -7,6 +7,7 @@ from forms import EmployeeForm
 from middlewares import login_required
 import datetime
 import pytz
+from controllers.helpers.responser import responser
 
 @bp.route('/update/<int:id>', methods=['POST'])
 @login_required
@@ -17,6 +18,6 @@ def update(id):
     if form.validate_on_submit():
         emp=Employee.query.filter_by(id=id).update({'name':form.name.data, 'email':form.email.data, 'occupations_id':form.occupations_id.data, 'updated_at':datenow})
         db.session.commit()
-        return redirect(url_for('employees.view',id=id)), 200
+        return responser(redirect(url_for('employees.view',id=id)), 200)
     else:
-        return jsonify({'errors': form.errors}), 400
+        return responser(jsonify({'errors': form.errors}), 400)

@@ -5,7 +5,7 @@ from forms import JobForm
 from models import Occupation
 from tests.user import login, logout
 
-def test_delete(app, client):
+def test_job_delete(app, client):
     login(app,client)
     db.session.query(Occupation).delete()
     db.session.commit()

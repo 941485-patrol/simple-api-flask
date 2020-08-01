@@ -2,6 +2,8 @@ from models.employee import Employee
 from controllers.employee.main import bp
 from flask import (request, url_for, jsonify)
 from middlewares import login_required
+from flask.helpers import make_response
+from controllers.helpers.responser import responser
 
 @bp.route('/view/<int:id>', methods=['GET'])
 @login_required
@@ -15,4 +17,4 @@ def view(id):
     }
     empObj['home']=url_for('employees.index')
     empObj['this']=request.full_path
-    return jsonify(empObj), 200
+    return responser(jsonify(empObj), 200)
