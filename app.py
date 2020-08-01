@@ -8,6 +8,8 @@ app = Flask(__name__)
 
 app.config.from_object(environ.get('APP_SETTINGS'))
 app.config['SESSION_PERMANENT'] = True
+app.config['SESSION_COOKIE_SAMESITE'] = 'None'
+app.config['SESSION_COOKIE_SECURE'] = True
 app.config['PERMANENT_SESSION_LIFETIME'] = datetime.timedelta(minutes=3)
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['JSON_SORT_KEYS'] = False
