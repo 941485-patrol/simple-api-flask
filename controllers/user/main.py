@@ -13,6 +13,9 @@ def get_current_user():
 
 @bp.after_app_request
 def add_cors_headers(response):
+    sess_cookie = request.cookies.get('session',None)
+    if sess_cookie is not None:
+        response.headers['Set-Cookie'] = 'session={}; SameSite=None; Secure; HttpOnly; path=/'.format(sess_cookie)
     response.headers['Access-Control-Allow-Origin'] = request.headers.get('Origin')
     response.headers['Access-Control-Allow-Methods'] = 'GET, POST, PUT, DELETE'
     response.headers['Access-Control-Allow-Headers'] = '*'
