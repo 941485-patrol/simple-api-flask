@@ -1,20 +1,44 @@
-## Simple API using Flask
+# Simple API using Flask
 
-# Demo 
+## Demo 
 [demo link](http://some-flask-api.herokuapp.com/)
 
-# Endpoints
+## Endpoints
 Jobs
     GET - /jobs/ and /jobs/view/'job_id'
     POST - /jobs/
-    PUT - /jobs/update/'job_id'
+    POST - /jobs/update/'job_id'
     DELETE - /jobs/delete/'job_id'
 
 Employees
     GET - /employees/ and /employees/view/'employee_id'
     POST - /employees/
-    PUT - /employees/update/'employee_id'
+    POST - /employees/update/'employee_id'
     DELETE - /employees/delete/'employee_id'
+
+## Forms
+
+### Jobs
+#### Creating a job
+1. name
+2. description
+
+#### Updating / Viewing / Deleting a job
+1. id
+2. name
+3. description
+
+### Employee
+#### Creating an employee
+1. name
+2. email
+3. occupations_id
+
+#### Updating / Viewing / Deleting an employee
+1. id
+2. name
+3. email
+4. occupations_id
 
 # Dev Installation
 1. pip install -r requirements.txt 
