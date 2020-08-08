@@ -4,6 +4,11 @@
 [demo link](http://some-flask-api.herokuapp.com/)
 
 ## Endpoints
+Authentication
+    Register POST - /users/register/
+    Login POST - /users/login/
+    Logout GET - /users/logout/
+
 Jobs
     GET - /jobs/ and /jobs/view/'job_id'
     POST - /jobs/
@@ -17,6 +22,15 @@ Employees
     DELETE - /employees/delete/'employee_id'
 
 ## Forms
+### User
+#### Register new user
+1. username
+2. password
+3. confirm (confirm password)
+
+### Login a user
+1. username
+2. password
 
 ### Jobs
 #### Creating a job
