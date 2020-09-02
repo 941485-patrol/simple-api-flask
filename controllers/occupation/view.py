@@ -10,6 +10,16 @@ from controllers.helpers.responser import responser
 def view(id):
     job=Occupation.query.filter_by(id=id).first_or_404(description="Job not found")
     jobObj=job.serialize()
+    empList=[]
+    for employee in job.employees:
+        empObj={
+            'id':employee.id,
+            'name':employee.name,
+            'email':employee.email,
+            'this':url_for('employees.view',id=employee.id),
+        }
+        empList.append(empObj)
+    jobObj['employees']=empList
     jobObj['home']=url_for('occupations.index')
     jobObj['this']=request.path
     return responser(jsonify(jobObj), 200)

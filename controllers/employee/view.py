@@ -10,11 +10,14 @@ from controllers.helpers.responser import responser
 def view(id):
     emp=Employee.query.filter_by(id=id).first_or_404(description="Employee not found")
     empObj=emp.serialize()
-    empObj['occupation'] = {
-        'occupation_name': emp.occupations.name,
-        'occupation_description': emp.occupations.description,
-        'this': url_for('occupations.view', id=emp.occupations.id),
-    }
+    if emp.occupations is not None:
+        empObj['occupation'] = {
+            'occupation_name': emp.occupations.name,
+            'occupation_description': emp.occupations.description,
+            'this': url_for('occupations.view', id=emp.occupations.id),
+        }
+    else:
+        empObj['occupation'] = None
     empObj['home']=url_for('employees.index')
-    empObj['this']=request.full_path
+    empObj['this']=request.path
     return responser(jsonify(empObj), 200)

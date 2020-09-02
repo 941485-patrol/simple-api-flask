@@ -6,10 +6,6 @@ from tests.user import login,logout
 
 def test_employee_delete(app, client):
     login(app,client)
-    db.session.query(Employee).delete()
-    db.session.commit()
-    db.session.query(Occupation).delete()
-    db.session.commit()
     postObj = {'name': 'myname', 'description':'mydescription'}
     response = client.post('/jobs/', data=postObj)
     result = json.loads(response.get_data(as_text=True))
@@ -24,17 +20,19 @@ def test_employee_delete(app, client):
     result3 = json.loads(response3.get_data(as_text=True))
     assert response3.status_code == 200
     assert result3.get('message') == 'Employee deleted.'
-    db.session.query(Employee).delete()
-    db.session.commit()
-    db.session.query(Occupation).delete()
-    db.session.commit()
+    response4 = client.get('/jobs/view/{}'.format(result.get('job_id')))
+    result4 = json.loads(response4.get_data(as_text=True))
+    assert result4.get('employees') == []
+    response5 = client.post('/jobs/delete/{}'.format(result.get('job_id')))
+    result5 = json.loads(response5.get_data(as_text=True))
+    assert result5.get('message') == 'Job deleted.'
     logout(app,client)
 
 def test_delete_invalid_url(app, client):
     login(app,client)
     response = client.post('/employees/delete/')
     assert response.status_code == 404
-    response2 = client.post('/employees/delete/2')
+    response2 = client.post('/employees/delete/42')
     assert response2.status_code == 404
     response3 = client.post('/employees/delete/    ')
     assert response3.status_code == 404
@@ -43,26 +41,5 @@ def test_delete_invalid_url(app, client):
     logout(app,client)
 
 def test_delete_unauthorized(app,client):
-    login(app,client)
-    db.session.query(Employee).delete()
-    db.session.commit()
-    db.session.query(Occupation).delete()
-    db.session.commit()
-    postObj = {'name': 'myname', 'description':'mydescription'}
-    response = client.post('/jobs/', data=postObj)
-    result = json.loads(response.get_data(as_text=True))
-    assert response.status_code == 200
-    assert result.get('message') == 'Job created.'
-    postObj2 = {'name': 'employeename', 'email':'employee1@gmail.com', 'occupations_id': result.get('job_id')}
-    response2 = client.post('/employees/', data=postObj2)
-    result2= json.loads(response2.get_data(as_text=True))
-    assert response2.status_code == 200
-    assert result2.get('message') == 'Employee created.'
-    logout(app,client)
-    response3 = client.post('/employees/delete/{}'.format(result2.get('employee_id')))
+    response3 = client.post('/employees/delete/1')
     assert response3.status_code == 401
-    db.session.query(Employee).delete()
-    db.session.commit()
-    db.session.query(Occupation).delete()
-    db.session.commit()
-    logout(app,client)

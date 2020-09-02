@@ -4,55 +4,75 @@
 [demo link](http://some-flask-api.herokuapp.com/)
 
 ## Endpoints
-Authentication
-    Register POST - /users/register/
-    Login POST - /users/login/
-    Logout GET - /users/logout/
+### Authentication
+- Register POST
+    - /users/register
+- Login POST 
+    - /users/login
+- Logout GET 
+    - /users/logout
 
-Jobs
-    GET - /jobs/ and /jobs/view/'job_id'
-    POST - /jobs/
-    POST - /jobs/update/'job_id'
-    DELETE - /jobs/delete/'job_id'
+### Jobs
+- GET 
+    - /jobs/ and /jobs/view/[job_id]
+    - /jobs/page=[pageNumber] pagination
+    - /jobs/sort=[sortKey] sorting
+        - sortKeys: 'id', '-id', 'name', '-name', 'description', '-description'
+    - /jobs/search=[keyword] searching
+- POST 
+    - /jobs/
+- POST 
+    - /jobs/update/[job_id]
+- DELETE 
+    - /jobs/delete/[job_id]
 
-Employees
-    GET - /employees/ and /employees/view/'employee_id'
-    POST - /employees/
-    POST - /employees/update/'employee_id'
-    DELETE - /employees/delete/'employee_id'
+### Employees
+- GET 
+    - /employees/ and /employees/view/[employee_id]
+    - /employees/page=[pageNumber] pagination
+    - /employees/sort=[sortkey] sorting
+        - sortKeys: 'id', '-id', 'name', '-name', 'email', '-email'
+    - /employees/search=[keyword] searching
+- POST 
+    - /employees/
+- POST 
+    - /employees/update/[employee_id]'
+- DELETE 
+    - /employees/delete/[employee_id]'
 
 ## Forms
 ### User
 #### Register new user
-1. username
-2. password
-3. confirm (confirm password)
+- username
+- password
+- confirm (confirm password)
 
 ### Login a user
-1. username
-2. password
+- username
+- password
 
 ### Jobs
 #### Creating a job
-1. name
-2. description
+- name
+- description
 
 #### Updating / Viewing / Deleting a job
-1. id
-2. name
-3. description
+- id
+- name
+- description
+
 
 ### Employee
 #### Creating an employee
-1. name
-2. email
-3. occupations_id
+- name
+- email
+- occupations_id
 
 #### Updating / Viewing / Deleting an employee
-1. id
-2. name
-3. email
-4. occupations_id
+- id
+- name
+- email
+- occupations_id
 
 # Dev Installation
 1. pip install -r requirements.txt 
@@ -63,11 +83,13 @@ Employees
 6. python manage.py db migrate
 7. python manage.py db upgrade
 8. flask run
-9. Use curl or postman
+9. Use curl or postman or talend api tester on browser
 
 # Testing
 1. Create test database on postgres 
 2. Configure .env TEST_DATABASE_URL to match test database name
 3. rename APP_SETTINGS in .env to config.TestingConfig
 4. follow Dev Installation steps 5-7
-5. python -m pytest
+5. python seeder.py seed
+6. python -m pytest
+7. python seeder.py unseed

@@ -1,6 +1,6 @@
 from flask import (Blueprint, flash, g, redirect, render_template, request, session, url_for, jsonify)
 from app import db
-from models import Occupation
+from models import Occupation, Employee
 from controllers.occupation.main import bp
 from forms import JobForm
 from controllers.url_util import url_util
@@ -8,6 +8,8 @@ from middlewares import login_required
 import datetime
 import pytz
 from controllers.helpers import responser
+from controllers.helpers.jobSearcher import jobSearcher
+from controllers.helpers.jobSorter import jobSorter
 
 @bp.route('/', methods=('GET','POST'))
 @login_required
@@ -25,7 +27,14 @@ def index():
             return responser(jsonify({'errors': form.errors}), 400)
     elif request.method=='GET':
         page=request.args.get('page',1)
-        jobs=Occupation.query.order_by(Occupation.id).paginate(page=int(page),per_page=1)
+        sort=request.args.get('sort','id')
+        searchee=request.args.get('search',None)
+        searchKey=jobSearcher(searchee)
+        sortColumn=jobSorter(sort)
+        if sortColumn is None:
+            return responser(jsonify({'message':'Wrong sorting order.'}), 400)
+        jobs=Occupation.query.filter(searchKey).order_by(sortColumn).paginate(page=int(page),per_page=5)
+        # jobs = db.session.query(Occupation).outerjoin(Employee).filter(searchKey).order_by(sortColumn).paginate(page=int(page),per_page=5)
         if len(jobs.items) == 0:
             return responser(jsonify({'message': 'No data.'}), 200)
         jobList={}
