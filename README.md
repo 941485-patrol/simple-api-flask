@@ -1,7 +1,7 @@
 # Simple API using Flask
 
 ## Demo 
-[demo link](http://some-flask-api.herokuapp.com/)
+[demo link](https://some-flask-api.herokuapp.com/)
 
 ## Endpoints
 ### Authentication
