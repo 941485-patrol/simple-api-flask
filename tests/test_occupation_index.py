@@ -75,6 +75,10 @@ def test_index_searching(app, client):
     result3 = json.loads(response3.get_data(as_text=True))
     assert response3.status_code == 200
     assert result3.get('message') == 'No data.'
+    response4 = client.get('jobs/?search=emp4')
+    result4 = json.loads(response4.get_data(as_text=True))
+    assert response4.status_code == 200
+    assert result4.get('results')[0].get('name') == 'name9'
     logout(app,client)
 
 def test_index_search_and_sort(app, client):
@@ -89,6 +93,12 @@ def test_index_search_and_sort(app, client):
     result2 = json.loads(response2.get_data(as_text=True))
     assert response2.status_code == 200
     assert result2.get('message') == 'No data.'
+    response3 = client.get('/jobs/?sort=name&search=emp')
+    result3 = json.loads(response3.get_data(as_text=True))
+    assert response3.status_code == 200
+    assert result3.get('navi').get('items_this_page') == 5
+    assert result3.get('navi').get('total_items') == 11
+    assert result3.get('results')[4].get('name') == 'name2'
     logout(app,client)
 
 def test_index_notfound(app, client):

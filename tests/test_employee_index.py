@@ -59,10 +59,10 @@ def test_index_searching(app, client):
     result = json.loads(response.get_data(as_text=True))
     assert response.status_code == 200
     assert result.get('results')[0].get('name') == 'emp12'
-    # response2 = client.get('/employees/?search=description12')
-    # result2 = json.loads(response2.get_data(as_text=True))
-    # assert response2.status_code == 200
-    # assert result2.get('results')[0].get('name') == 'emp1'
+    response2 = client.get('/employees/?search=description12')
+    result2 = json.loads(response2.get_data(as_text=True))
+    assert response2.status_code == 200
+    assert result2.get('results')[0].get('name') == 'emp1'
     response2 = client.get('/employees/?search=em')
     result2 = json.loads(response2.get_data(as_text=True))
     assert response2.status_code == 200
@@ -85,6 +85,12 @@ def test_index_search_and_sort(app, client):
     result2 = json.loads(response2.get_data(as_text=True))
     assert response2.status_code == 200
     assert result2.get('message') == 'No data.'
+    response3 = client.get('/employees/?search=description&page=1&sort=-name')
+    result3 = json.loads(response3.get_data(as_text=True))
+    assert response3.status_code == 200
+    assert result3.get('navi').get('items_this_page') == 5
+    assert result3.get('navi').get('total_items') == 12
+    assert result3.get('results')[4].get('name') == 'emp5'
     logout(app,client)
 
 def test_index_notfound(app, client):
