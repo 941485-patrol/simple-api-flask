@@ -160,23 +160,10 @@ def test_create_employee_incomplete_fields(app, client):
     assert result2.get('errors').get('email') == ['Minimum 2 and maximum 50 characters','Invalid Email.']
     assert result2.get('errors').get('name') == ['Minimum 2 and maximum 50 characters']
     assert result2.get('errors').get('occupations_id') == ['This field is required.']
-    # db.session.query(Employee).delete()
-    # db.session.commit()
-    # db.session.query(Occupation).delete()
-    # db.session.commit()
     logout(app,client)
 
 def test_create_employee_invalid_email(app, client):
     login(app,client)
-    # db.session.query(Employee).delete()
-    # db.session.commit()
-    # db.session.query(Occupation).delete()
-    # db.session.commit()
-    # postObj = {'name': 'myname', 'description':'mydescription'}
-    # response = client.post('/jobs/', data=postObj)
-    # result = json.loads(response.get_data(as_text=True))
-    # assert response.status_code == 200
-    # assert result.get('message') == 'Job created.'
     postObj2 = {'name': 'employeeName', 'email':'j@j', 'occupations_id':5}
     response2 = client.post('/employees/', data=postObj2)
     result2= json.loads(response2.get_data(as_text=True))
