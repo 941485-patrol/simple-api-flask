@@ -13,6 +13,27 @@ def test_update(app, client):
     assert response3.status_code == 200
     logout(app,client)
 
+def test_check_occupation(app, client):
+    login(app,client)
+    response = client.get('/jobs/view/5')
+    result = json.loads(response.get_data(as_text=True))
+    assert response.status_code == 200
+    found = False
+    employees = result.get('employees')
+    for x in employees:
+        if 7 == x.get('id'):
+            found = True
+    assert found == True
+    logout(app,client)
+
+def test_check_null_occupation(app, client):
+    login(app, client)
+    response = client.get('/jobs/view/6')
+    result = json.loads(response.get_data(as_text=True))
+    assert response.status_code == 200
+    employees = result.get('employees')
+    assert employees == []
+
 def test_update_double_entry(app, client):
     login(app,client)
     putObj = {'id':7, 'name': 'emp8', 'email':'emp8@gmail.com', 'occupations_id':5}
