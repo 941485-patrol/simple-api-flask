@@ -13,6 +13,15 @@ def test_update_occupation(app, client):
     assert response2.status_code == 200
     logout(app,client)
 
+def test_update_occupation_again_same_credentials(app, client):
+    login(app,client)
+    timezone=pytz.timezone('UTC')
+    datenow = timezone.localize(datetime.datetime.utcnow())
+    putObj = {'id': 7, 'name': 'name77', 'description':'description77', 'updated_at':datenow}
+    response2 = client.post('/jobs/update/7', data=putObj)
+    assert response2.status_code == 200
+    logout(app,client)
+
 def test_update_occupation_invalid_id_number(app, client):
     login(app,client)
     timezone=pytz.timezone('UTC')

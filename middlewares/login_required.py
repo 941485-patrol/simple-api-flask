@@ -5,7 +5,7 @@ def login_required(func):
     @functools.wraps(func)
     def decorator(*args, **kwargs):
         if g.user is None:
-            abort(401)
+            return jsonify({'message': 'Unauthorized.'}), 401
         else:
             return func(*args,**kwargs)
     return decorator 

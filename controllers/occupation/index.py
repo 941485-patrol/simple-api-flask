@@ -1,4 +1,4 @@
-from flask import (Blueprint, flash, g, redirect, render_template, request, session, url_for, jsonify)
+from flask import (Blueprint, flash, g, render_template, request, session, url_for, jsonify)
 from app import db
 from models import Occupation, Employee
 from controllers.occupation.main import bp
