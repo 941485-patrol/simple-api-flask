@@ -4,6 +4,14 @@ import json, datetime, pytz
 from models import Occupation, Employee
 from tests.user import login,logout
 
+def test_update_get_toupdate_job(app,client):
+    login(app,client)
+    response = client.get('/jobs/view/6')
+    result = json.loads(response.get_data(as_text=True))
+    employees = result.get('employees')
+    assert response.status_code == 200
+    assert len(employees) == 1
+
 def test_update(app, client):
     login(app,client)
     timezone=pytz.timezone('UTC')
@@ -22,17 +30,30 @@ def test_update_again_same_credentials(app, client):
     assert response3.status_code == 200
     logout(app,client)
 
+def test_update_get_updated_emp(app, client):
+    login(app,client)
+    response = client.get('/employees/view/7')
+    result = json.loads(response.get_data(as_text=True))
+    assert response.status_code == 200
+    assert result.get('occupations_id') == 5
+
 def test_check_occupation(app, client):
     login(app,client)
     response = client.get('/jobs/view/5')
     result = json.loads(response.get_data(as_text=True))
     assert response.status_code == 200
-    found = False
     employees = result.get('employees')
-    for x in employees:
-        if 7 == x.get('id'):
-            found = True
-    assert found == True
+    found = list(filter(lambda x : x.get('id') == 7 , employees))
+    assert len(found) == 1
+    logout(app,client)
+
+def test_check_occupation_length(app, client):
+    login(app,client)
+    response = client.get('/jobs/view/5')
+    result = json.loads(response.get_data(as_text=True))
+    assert response.status_code == 200
+    employees = result.get('employees')
+    assert len(employees) == 2
     logout(app,client)
 
 def test_check_null_occupation(app, client):
