@@ -1,0 +1,25 @@
+version: '3.7'
+services: 
+    some-flask-api:
+        build: .
+        volumes: 
+            - .:/app
+        expose:
+            - "5000"
+        ports:
+            - "5000:5000"
+        links:
+            - postgres:postgres
+        env_file:
+            - .env
+        command: "flask run --host 0.0.0.0"
+    postgres:
+        image: postgres
+        ports:
+            - "5432:5432"
+        env_file:
+            - database.env
+        volumes:
+            - db-data:/var/lib/postgresql/data
+volumes:
+    db-data:

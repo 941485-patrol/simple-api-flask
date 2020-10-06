@@ -9,7 +9,6 @@ app = Flask(__name__)
 app.config.from_object(environ.get('APP_SETTINGS'))
 db = SQLAlchemy(app)
 
-from models import Occupation,Employee,User
 from controllers import occupation,employee,user
 
 app.register_blueprint(occupation.bp)
