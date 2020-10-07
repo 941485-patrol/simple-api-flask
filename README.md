@@ -13,8 +13,9 @@ password: Password123 \
 5. python manage.py db init
 6. python manage.py db migrate
 7. python manage.py db upgrade
-8. flask run
-9. Use curl or postman or talend api tester on browser
+8. python seeder.py seed
+9. flask run
+10. Use curl or postman or talend api tester on browser
 
 #### Testing
 1. Create test database on postgres 
@@ -27,6 +28,17 @@ password: Password123 \
 
 *Note: Be sure to run postgresql server and create a database before cloning. \
 *Test notes: Be sure to follow testing steps before testing again. 
+
+### Docker (If you want to run the site using docker)
+1. Configure .example_env and .example_database_env
+2. Rename to .env and database.env
+1. docker-compose up
+2. docker-compose postgres bash
+3. psql --host=postgres --username=POSTGRES_USER
+4. c\ POSTGRES_DB then exit
+5. docker-compose up some-flask-api python seeder.py seed
+5. docker-compose up some-flask-api (testing steps 6-7 if you want to test application)
+10. Use curl or postman or talend api tester on browser
 
 ### Endpoints
 |Method|URL|Form|Description|
