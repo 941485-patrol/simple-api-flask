@@ -33,11 +33,11 @@ password: Password123 \
 1. Configure .example_env and .example_database_env
 2. Rename to .env and database.env
 1. docker-compose up
-2. docker-compose postgres bash
+2. docker-compose run postgres bash
 3. psql --host=postgres --username=POSTGRES_USER
 4. c\ POSTGRES_DB then exit
-5. docker-compose up some-flask-api python seeder.py seed
-5. docker-compose up some-flask-api (testing steps 6-7 if you want to test application)
+5. docker-compose run some-flask-api python seeder.py seed
+5. docker-compose run some-flask-api (testing steps 6-7 if you want to test application)
 10. Use curl or postman or talend api tester on browser
 
 ### Endpoints
