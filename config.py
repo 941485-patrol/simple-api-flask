@@ -14,7 +14,6 @@ class Config(object):
     SESSION_COOKIE_SECURE = True
     PERMANENT_SESSION_LIFETIME = datetime.timedelta(minutes=3)
     SQLALCHEMY_TRACK_MODIFICATIONS = False
-    JSON_SORT_KEYS = False
 
 class ProductionConfig(Config):
     DEBUG=False

@@ -10,9 +10,9 @@ password: Password123 \
 2. Configure .example_env
 3. Rename configured .example_env to .env
 4. Create database on postgresql server based on dbname on .env file 
-5. python manage.py db init
-6. python manage.py db migrate
-7. python manage.py db upgrade
+5. flask db init
+6. flask db migrate
+7. flask db upgrade
 8. python seeder.py seed
 9. flask run
 10. Use curl or postman or talend api tester on browser
