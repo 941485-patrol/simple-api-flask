@@ -2,15 +2,18 @@ from app import app, db
 from os import environ
 from models import User , Occupation, Employee
 from werkzeug.security import generate_password_hash
+from flask.cli import FlaskGroup
 import pytz
 import datetime
 import click
 
 app.config.from_object(environ.get('APP_SETTINGS'))
 
-@click.group()
-def cli():
-    pass
+cli = FlaskGroup(app)
+
+# @click.group()
+# def cli():
+#     pass
 
 # @cli.command()
 # def seedUser():

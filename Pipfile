@@ -9,7 +9,6 @@ pylint = "*"
 [packages]
 flask = "*"
 flask-sqlalchemy = "*"
-flask-script = "*"
 flask-migrate = "*"
 psycopg2 = "*"
 gunicorn = "*"
@@ -29,6 +28,7 @@ MarkupSafe = "*"
 SQLAlchemy = "*"
 Werkzeug = "*"
 WTForms = {extras = ["email"],version = "*"}
+flask-cli = "*"
 
 [requires]
-python_version = "3.8"
+python_version = "3.9"
